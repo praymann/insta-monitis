@@ -5,20 +5,25 @@ module InstaMonitis
 
     @@file = ENV['HOME'] + '/.monitis'
 
-    def self.load opts={}
-      if opts.class == String
-        opts = { "file" => opts }
+    @@defaults = ENV['HOME'] + '/.monitis_defaults'
+
+    def self.load 
+      opts = {}
+      if File.exist? @@file
+        file = YAML.load_file(@@file)
+        
+        opts.each do |key, val|
+          file[key] = val
+        end    
+        
+        return file unless File.exist? @@defaults
+
+        defaults = YAML.load_file(@@defaults)
+
+        file["defaults"] = defaults
+        
+        return file
       end
-
-      file = opts.delete("file") || opts.delete(:file) || @@file
-      conf = YAML.load_file(file)
-
-      # overide config with passed options
-      opts.each do |key, val|
-        conf[key] = val
-      end
-
-      return conf
     end
   end
 end
