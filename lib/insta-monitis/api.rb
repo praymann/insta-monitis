@@ -9,15 +9,22 @@ module InstaMonitis
       @@host = 'https://api.monitis.com'
       @@prefix = '/api'
       @@version = 'version=3'
-
+      
       def initialize opts={}
         @key    = opts["key"]
         @secret = opts["secret"]
       end
 
       def construct_authstring
-        unless defined?(@key).nil? and defined?(@secret).nil?
-          return "apikey=#{@key}&secretkey=#{@secret}"
+        if defined?(@token).nil?
+          unless defined?(@key).nil? and defined?(@secret).nil?
+            return "apikey=#{@key}&secretkey=#{@secret}"
+          else
+            puts "Either apikey or secretkey isn't set.. exiting."
+            exit
+          end
+        else
+          return "apikey=#{@key}&authToken=#{@token}"
         end
       end
 
@@ -58,6 +65,10 @@ module InstaMonitis
         rescue 
           
         end
+      end
+
+      def set_authtoken string
+        @token = string
       end
     end
 end

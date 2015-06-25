@@ -5,47 +5,23 @@ module InstaMonitis
   class Runner < Thor    
     class_option :verbose, :type => :boolean
     
-    desc "pull [IDENTIFIER] [STYLE]", "Pull test that matches/contains/is; output in json, hash, human"
+    desc "pull [IDENTIFIER] [STYLE]", "Pull test that matches/contains/is; output in json, hash, yaml"
     def pull(identifier, style)
       identifier.chomp
       style.chomp
       this = Backend.new
       log("Requesting test(s) that matches/contains/is: #{identifier}")
-      case style
-        when 'human'
-          log("Requesting test(s) in a human readable format\n\n")
-          this.contains(identifier, style)
-        when 'json'
-          log("Requesting test(s) in json format\n\n")
-          this.contains(identifier, style)
-        when 'hash'
-          log("Requesting test(s) in hash format\n\n")
-          this.contains(identifier, style)
-        else
-          log("Requesting all tests in a data format of #{style}\n\n")
-          puts "I don't recongize that style of data..."
-      end
+      log("Requesting test(s) in json format\n\n")
+      this.search(identifier, check_style(style))
     end
     
-    desc "pullall [STYLE]", "Pull down ALL tests; output in json, hash, human"
+    desc "pullall [STYLE]", "Pull down ALL tests; output in json, hash, yaml"
     def pullall(style)
       style.chomp
       this = Backend.new
       log("WARNING: This may take a while!")
-      case style
-        when 'human'
-          log("Requesting all tests in a human readable format\n\n")
-          this.dump(style)
-        when 'json'
-          log("Requesting all tests in json format\n\n")
-          this.dump(style)
-        when 'hash'
-          log("Requesting all test in hash format\n\n")
-          this.dump(style)
-        else
-          log("Requesting all tests in a data format of #{style}\n\n")
-          puts "I don't recongize that style of data..."
-      end
+      log("Requesting all tests in #{style} format\n\n")
+      this.dump(check_style(style))
     end
     
     desc "add [WEBSITE]", "Add defined default tests for WEBSITE"
@@ -60,5 +36,22 @@ module InstaMonitis
         puts str if options[:verbose]
       end
     end
+
+    private
+    
+    def check_style string
+      case string
+        when 'yaml'
+          return string 
+        when 'json'
+          return string
+        when 'hash'
+          return string
+        else
+          puts "I don't recongize that style of data..."
+          exit
+      end
+    end
+
   end
 end
