@@ -34,6 +34,7 @@ Or install it yourself as:
 Create a file called .monitis in your $HOME.
 
 It should contain your API key and secret, like so:
+
     ~> cat ~/.monitis 
     key: RANDOMSTRINGOFRANDOMNESS
     secret: THISISSUPERSECRET
