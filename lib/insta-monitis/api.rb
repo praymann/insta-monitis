@@ -63,7 +63,7 @@ module InstaMonitis
         rescue Timeout::Error => e
           puts "Possible HTTP Timeout issue"
         rescue 
-          
+          raise RunTimeError
         end
       end
 

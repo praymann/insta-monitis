@@ -4,9 +4,9 @@ require 'thor'
 module InstaMonitis
 
   class List < Thor
-    class_option :style, :default => 'yaml', :desc => 'Style of output, yaml:json:hash'
+    class_option :style, :aliases => '-s', :default => 'yaml', :desc => 'Style of output, yaml:json:hash'
    
-    desc "list http --style=[STYLE]", "List all http tests"
+    desc "http --style=[STYLE]", "List all http tests"
     long_desc <<-LONGDESC
       Using the API, list all External Monitors of type http.
     LONGDESC
@@ -16,7 +16,7 @@ module InstaMonitis
       this.dump_http(check_style(options[:style]))
     end
 
-    desc "list page --style=[STYLE]", "List all full page load tests"
+    desc "page --style=[STYLE]", "List all full page load tests"
     long_desc <<-LONGDESC
       Using the API, list all Full Page Load Monitors of type fullpageload.
     LONGDESC
@@ -26,7 +26,7 @@ module InstaMonitis
       this.dump_fullpage(check_style(options[:style]))
     end
 
-    desc "list all --style=[STYLE]", "List all tests, sorted by id"
+    desc "all --style=[STYLE]", "List all tests, sorted by id"
     long_desc <<-LONGDESC
       Using the API, list every single monitor of any type. Sorted by id
     LONGDESC
@@ -69,19 +69,82 @@ module InstaMonitis
   end
 
   class Search < Thor
+    class_option :style, :aliases => '-s', :default => 'yaml', :desc => 'Style of output, yaml:json:hash'
+    class_option :id, :aliases => '-i', :type => :numeric, :desc => 'Id of test'
+    class_option :name, :aliases => '-n', :desc => 'Name of test'
+    class_option :url, :aliases => '-u', :desc => 'URL of test'
+    class_option :tag, :aliases => '-t', :desc => 'Tag of test(s)'
 
+    desc "http --[OPTION]=[VALUE] --style=[STYLE]", "Search all http tests"
+    long_desc <<-LONGDESC
+      Using the API, search through all External Monitors of type http.
+      
+      For a given id ( -i, --id ) find the matching monitor
+      
+      For a given name ( -n, --name ) find the matching monitor
+      
+      For a given string ( -u, --url ) find any monitor which has a URL value that contains string
+      
+      For a given tag ( -t, --tag ) find any montior with a matching tag
+    LONGDESC
+    def http()
+      this = Backend.new
+      this.search_http(check_options(options), check_style(options[:style]))
+    end
+
+    desc "page --[OPTION]=[VALUE] --style=[STYLE]", "Search all fullpage tests"
+    long_desc <<-LONGDESC
+    
+    LONGDESC
+    def page()
+      this = Backend.new
+      this.search_fullpage(check_options(options), check_style(options[:style]))
+    end
+
+    no_commands do
+      def log(str)
+        puts str if options[:verbose]
+      end
+    end
+
+    private
+
+    def check_options options
+      storage = options.reject { |k, v| k == 'verbose' }
+      storage.reject! { |k, v| k == 'style' }
+      if storage.length < 1 or storage.length > 1
+        puts "Too few or too many options, one at a time please."
+        exit
+      else
+        return storage 
+      end
+    end
+
+    def check_style string
+      case string
+        when 'yaml'
+          return string
+        when 'json'
+          return string
+        when 'hash'
+          return string
+        else
+          puts "Valid options are json, hash, yaml. Default style is YAML"
+          exit
+      end
+    end
   end
 
   class Runner < Thor
-    class_option :verbose, :type => :boolean
+    class_option :verbose, :aliases => '-v', :type => :boolean
 
-    desc "list <subcommand> <args>", "Perform list operations" 
+    desc "list [subcommand] [args]", "Perform list operations" 
     subcommand "list", List
   
-    desc "add <subcommand> <args>", "Perform add operations"
+    desc "add [subcommand] [args]", "Perform add operations"
     subcommand "add", Add
 
-    desc "search <subcommand> <args>", "Perform search operations"
+    desc "search [subcommand] [args]", "Perform search operations"
     subcommand "search", Search
 
     no_commands do

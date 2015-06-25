@@ -36,12 +36,19 @@ module InstaMonitis
       print(storage, style)
     end
 
-    def search string, style
-      if !/\A\d+\z/.match(string)
-        # Not a positive number, url?
+    def search_http param, style
+      unless param['id'].nil?
+        print(dump("testinfo&testId=#{param['id']}"), style)
       else
-        # Number
-        send "print_#{style}", @monitis.get("testinfo&testId=#{string}")
+        print(search(dump('tests')['testList'], param), style)
+      end
+    end
+    
+    def search_fullpage param, style
+      unless param['id'].nil?
+        print(dump("fullPageLoadTestInfo&monitorId=#{param['id']}"), style)
+      else
+        print(search(dump('fullPageLoadTests'), param), style)
       end
     end
    
@@ -52,9 +59,20 @@ module InstaMonitis
         return @monitis.get(action.to_s)
       rescue
           puts "API failure? You're not supposed to be here. Exiting."
+          exit
       end
     end
- 
+
+    def search tests, param
+      storage = Array.new
+      tests.each do |test|
+        if test["#{param.keys.first}"].eql? param.values.first or test["#{param.keys.first}"].include? param.values.first
+          storage << test
+        end
+      end
+      return storage
+    end
+
     def push_test
     
     end
