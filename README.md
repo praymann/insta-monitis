@@ -5,7 +5,6 @@ A simple ruby CLI which enables the quick creation or listing of tests in a Moni
 Leverages v3 of the Monitis API.
 
 TODO:
-* Flesh out search (by id, by url, by name)
 * Flesh out creation of tests from a set of defaults, given a url/etc
 * Set defaults via YAML?
 * Flesh out bulk creation via .csv?
@@ -59,9 +58,9 @@ List:
 ~> insta-monitis list
 Commands:
   insta-monitis list help [COMMAND]             # Describe subcommands or one specific subcommand
-  insta-monitis list list all --style=[STYLE]   # List all tests, sorted by id
-  insta-monitis list list http --style=[STYLE]  # List all http tests
-  insta-monitis list list page --style=[STYLE]  # List all full page load tests
+  insta-monitis list all --style=[STYLE]   # List all tests, sorted by id
+  insta-monitis list http --style=[STYLE]  # List all http tests
+  insta-monitis list page --style=[STYLE]  # List all full page load tests
 
 Options:
   [--style=STYLE]  # Style of output, yaml:json:hash
@@ -85,7 +84,19 @@ Add:
 
 Search:
 ```ruby
+dpramann@atlas~/p/insta-monitis> bin/insta-monitis search
+Commands:
+  insta-monitis search help [COMMAND]                           # Describe subcommands or one specific subcommand
+  insta-monitis search http --[OPTION]=[VALUE] --style=[STYLE]  # Search all http tests
+  insta-monitis search page --[OPTION]=[VALUE] --style=[STYLE]  # Search all fullpage tests
 
+Options:
+  -s, [--style=STYLE]  # Style of output, yaml:json:hash
+                       # Default: yaml
+  -i, [--id=N]         # Id of test
+  -n, [--name=NAME]    # Name of test
+  -u, [--url=URL]      # URL of test
+  -t, [--tag=TAG]      # Tag of test(s)
 ```
 
 ## Development
