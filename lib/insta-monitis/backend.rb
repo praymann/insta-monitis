@@ -1,4 +1,3 @@
-require 'dish'
 require 'uri'
 
 module InstaMonitis
@@ -13,23 +12,30 @@ module InstaMonitis
 
       @monitis.set_authtoken(@monitis.get('authToken')["authToken"])
     end
-    
-    def dump style
-      begin
-        puts "External Monitors"
-        tests = @monitis.get("tests")
-        tests["testList"].each do |test|
-          send "print_#{style}", test
-        end
-        puts "Full Page Monitors"
-        @monitis.get("FullPageLoadTests").each do |test|
-          send "print_#{style}", test
-        end
-      rescue
-          puts "You're not supposed to be here. Exiting."
-      end
+
+    def dump_http style
+      puts "External Monitors"
+      print(dump('tests')['testList'], style)
+    end
+
+    def dump_fullpage style
+      puts "Full Page Monitors"
+      print(dump('fullPageLoadTests'), style)
     end
     
+    def dump_all style
+      puts "All Monitors"
+      storage = Array.new
+      dump('fullPageLoadTests').each do |test|
+        storage << test
+      end
+      dump('tests')['testList'].each do |test|
+        storage << test
+      end
+      storage.sort_by! { |h| h['id'] }
+      print(storage, style)
+    end
+
     def search string, style
       if !/\A\d+\z/.match(string)
         # Not a positive number, url?
@@ -40,9 +46,23 @@ module InstaMonitis
     end
    
     private
+
+    def dump action
+      begin  
+        return @monitis.get(action.to_s)
+      rescue
+          puts "API failure? You're not supposed to be here. Exiting."
+      end
+    end
  
     def push_test
     
+    end
+
+    def print object, style
+      object.each do |thing|
+        send "print_#{style}", thing
+      end
     end
     
     def print_yaml test

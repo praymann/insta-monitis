@@ -5,9 +5,10 @@ A simple ruby CLI which enables the quick creation or listing of tests in a Moni
 Leverages v3 of the Monitis API.
 
 TODO:
+* Flesh out search (by id, by url, by name)
 * Flesh out creation of tests from a set of defaults, given a url/etc
-* Flesh out pushing test
 * Set defaults via YAML?
+* Flesh out bulk creation via .csv?
 * Clean up Configurator Module
 * Comments, Comments, Comments
 * Error handling
@@ -22,19 +23,66 @@ gem 'insta-monitis'
 
 And then execute:
 
-    $ bundle
+    ~> bundle
 
 Or install it yourself as:
 
-    $ gem install insta-monitis
+    ~> gem install insta-monitis
+
+## Setup / Credentials
+
+Create a file called .monitis in your $HOME.
+
+It should contain your API key and secret, like so:
+    ~> cat ~/.monitis 
+    key: RANDOMSTRINGOFRANDOMNESS
+    secret: THISISSUPERSECRET
+    ~>
 
 ## Usage
 
 Help menu:
 ```ruby
- 
+~> insta-monitis
+Commands:
+  insta-monitis add <subcommand> <args>     # Perform add operations
+  insta-monitis help [COMMAND]              # Describe available commands or one specific command
+  insta-monitis list <subcommand> <args>    # Perform list operations
+  insta-monitis search <subcommand> <args>  # Perform search operations
+
+Options:
+  [--verbose], [--no-verbose] 
 ```
-Pull:
+List:
+```ruby
+~> insta-monitis list
+Commands:
+  insta-monitis list help [COMMAND]             # Describe subcommands or one specific subcommand
+  insta-monitis list list all --style=[STYLE]   # List all tests, sorted by id
+  insta-monitis list list http --style=[STYLE]  # List all http tests
+  insta-monitis list list page --style=[STYLE]  # List all full page load tests
+
+Options:
+  [--style=STYLE]  # Style of output, yaml:json:hash
+                   # Default: yaml
+
+~> insta-monitis list help all
+Usage:
+  insta-monitis list all --style=[STYLE]
+
+Options:
+  [--style=STYLE]  # Style of output, yaml:json:hash
+                   # Default: yaml
+
+Description:
+  Using the API, list every single monitor of any type. Sorted by id
+```
+Add:
+```ruby
+
+```
+
+Search:
 ```ruby
 
 ```
