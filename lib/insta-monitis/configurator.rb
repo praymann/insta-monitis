@@ -5,8 +5,6 @@ module InstaMonitis
 
     @@file = ENV['HOME'] + '/.monitis'
 
-    @@defaults = ENV['HOME'] + '/.monitis_defaults'
-
     def self.load 
       opts = {}
       if File.exist? @@file
@@ -15,12 +13,6 @@ module InstaMonitis
         opts.each do |key, val|
           file[key] = val
         end    
-        
-        return file unless File.exist? @@defaults
-
-        defaults = YAML.load_file(@@defaults)
-
-        file["defaults"] = defaults
         
         return file
       end
