@@ -6,9 +6,10 @@ Leverages v3 of the Monitis API.
 
 TODO:
 * Flesh out creation of tests from a set of defaults, given a url/etc
-* Set defaults via YAML?
+* Flesh out "filling in the details" of a test, before POST
+* Flesh out POST'in to Monitis API
+* Flesh out creating .monitis via API call with username/password
 * Flesh out bulk creation via .csv?
-* Clean up Configurator Module
 * Comments, Comments, Comments
 * Error handling
 

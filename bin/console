@@ -12,6 +12,10 @@ require "insta-monitis"
 
 @config = InstaMonitis::Configurator.load()
 @api = InstaMonitis::Api.new(@config)
+@api.set_authtoken(@api.get('authToken')["authToken"])
+
+@http = InstaMonitis::HTTPMonitor.new
+@fullpage = InstaMonitis::FullPageMonitor.new
 
 require "irb"
 

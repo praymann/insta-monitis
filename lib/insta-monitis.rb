@@ -11,6 +11,7 @@ require "insta-monitis/monitors.rb"
 
 # Main class for insta-monitis ( API <-> Backend <-> Runner )
 require "insta-monitis/backend"
+require "insta-monitis/userinput"
 
 # CLI class ( Thor )
 require "insta-monitis/runner"

@@ -3,7 +3,36 @@ require 'thor'
 
 module InstaMonitis
 
+  module RunnerHelper
+    def check_style string
+      case string
+        when 'yaml'
+          return string
+        when 'json'
+          return string
+        when 'hash'
+          return string
+        else
+          puts "Valid options are json, hash, yaml. Default style is YAML"
+          exit
+      end
+    end
+
+    def check_options options
+      storage = options.reject { |k, v| k == 'verbose' }
+      storage.reject! { |k, v| k == 'style' }
+      if storage.length < 1 or storage.length > 1
+        puts "Too few or too many options, one at a time please."
+        exit
+      else
+        return storage
+      end
+    end
+  end
+
   class List < Thor
+    include RunnerHelper
+    
     class_option :style, :aliases => '-s', :default => 'yaml', :desc => 'Style of output, yaml:json:hash'
    
     desc "http --style=[STYLE]", "List all http tests"
@@ -41,34 +70,49 @@ module InstaMonitis
         puts str if options[:verbose]
       end
     end
-
-    private
-
-    def check_style string
-      case string
-        when 'yaml'
-          return string
-        when 'json'
-          return string
-        when 'hash'
-          return string
-        else
-          puts "Valid options are json, hash, yaml. Default style is YAML"
-          exit
-      end
-    end
   end
 
 
   class Add < Thor
-    #def add(website)
-      #this = Backend.new
-      #log("API - Add tests for #{website}")
-      #this.create(website)
-    #end
+    desc "http", "Interactively create a http test"
+    long_desc <<-LONGDESC
+      After building a local http ExternalMonitor, use the API to created it in Monitis.
+    LONGDESC
+    def http()
+      Backend.new.create_http
+    end
+    
+    desc "page", "Interactively create a full page load test"
+    long_desc <<-LONGDESC
+      After building a local FullPageLoad Monitor, use the API to created it in Monitis.
+    LONGDESC
+    def page()
+      Backend.new.create_fullpage
+    end
+    
+    desc "bulk --file=[FILE]", "Via file, create one or many test(s)"
+    long_desc <<-LONGDESC
+      Load in a file full of test(s), use the API to created them in Monitis.
+    LONGDESC
+    option :file, :aliases => '-f', :desc => 'Filename to load'
+    def bulk()
+      Backend.new.create_bulk
+    end
+
+
+    no_commands do
+      def log(str)
+        puts str if options[:verbose]
+      end
+    end
+  end
+
+  class Del < Thor
+
   end
 
   class Search < Thor
+    include RunnerHelper
     class_option :style, :aliases => '-s', :default => 'yaml', :desc => 'Style of output, yaml:json:hash'
     class_option :id, :aliases => '-i', :type => :numeric, :desc => 'Id of test'
     class_option :name, :aliases => '-n', :desc => 'Name of test'
@@ -106,45 +150,21 @@ module InstaMonitis
         puts str if options[:verbose]
       end
     end
-
-    private
-
-    def check_options options
-      storage = options.reject { |k, v| k == 'verbose' }
-      storage.reject! { |k, v| k == 'style' }
-      if storage.length < 1 or storage.length > 1
-        puts "Too few or too many options, one at a time please."
-        exit
-      else
-        return storage 
-      end
-    end
-
-    def check_style string
-      case string
-        when 'yaml'
-          return string
-        when 'json'
-          return string
-        when 'hash'
-          return string
-        else
-          puts "Valid options are json, hash, yaml. Default style is YAML"
-          exit
-      end
-    end
   end
 
   class Runner < Thor
     class_option :verbose, :aliases => '-v', :type => :boolean
 
-    desc "list [subcommand] [args]", "Perform list operations" 
+    desc "list [COMMAND] [ARGS]", "Perform list operations" 
     subcommand "list", List
   
-    desc "add [subcommand] [args]", "Perform add operations"
+    desc "add [COMMAND] [ARGS]", "Perform add operations"
     subcommand "add", Add
 
-    desc "search [subcommand] [args]", "Perform search operations"
+    desc "del [COMMAND] [ARGS]", "Perform delete operations"
+    subcommand "del", Del
+
+    desc "search [COMMAND] [ARGS]", "Perform search operations"
     subcommand "search", Search
 
     no_commands do

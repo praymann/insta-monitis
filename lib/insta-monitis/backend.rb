@@ -1,10 +1,12 @@
 require 'uri'
+require 'insta-monitis/userinput'
 
 module InstaMonitis
   class Backend
-   
+    include UserInput
     # Init method
     # Load all configurators then init a API object
+    # Set the authToken in that API object
     def initialize
       conf = Configurator.load()
       
@@ -40,7 +42,11 @@ module InstaMonitis
       unless param['id'].nil?
         print(dump("testinfo&testId=#{param['id']}"), style)
       else
-        print(search(dump('tests')['testList'], param), style)
+        unless param['tag'].nil?
+          print(dump("tagtests&tag=#{param['tag']}"), style)
+        else
+          print(search(dump('tests')['testList'], param), style)
+        end
       end
     end
     
@@ -50,6 +56,24 @@ module InstaMonitis
       else
         print(search(dump('fullPageLoadTests'), param), style)
       end
+    end
+
+    def create_http
+      this = HTTPMonitor.new
+      puts this.to_json
+      userinput_http this
+      puts this.to_json
+
+    end
+
+    def create_fullpage
+      this = FullPageMonitor.new
+      puts this.to_json
+
+    end
+
+    def create_bulk
+
     end
    
     private
@@ -74,6 +98,7 @@ module InstaMonitis
     end
 
     def push_test
+      
     
     end
 
@@ -96,3 +121,4 @@ module InstaMonitis
     end
   end
 end
+

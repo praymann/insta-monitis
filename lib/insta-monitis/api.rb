@@ -15,6 +15,10 @@ module InstaMonitis
         @secret = opts["secret"]
       end
 
+      def construct_timestp
+        return "timestamp=#{Time.now}"
+      end
+
       def construct_authstring
         if defined?(@token).nil?
           unless defined?(@key).nil? and defined?(@secret).nil?
@@ -38,10 +42,6 @@ module InstaMonitis
         end
       end
       
-      def construct_httpuri
-        return URI("#{@@host}")
-      end
-      
       def get endpoint
 
         # remove preceeding slash
@@ -52,7 +52,7 @@ module InstaMonitis
         http = Net::HTTP.new(uri.host, uri.port)
 
         http.use_ssl = true
-        
+
         begin
           res = http.get(uri.path + '?' + uri.query)
           return JSON.parse(res.body) unless res.code == '403'
@@ -65,6 +65,40 @@ module InstaMonitis
         rescue 
           raise RunTimeError
         end
+      end
+
+      def put endpoint, info
+        # remove preceeding slash
+        endpoint.gsub!(/^\//, '')
+
+        uri  = construct_apiuri(endpoint)
+
+        postdata = uri.query + '&' + construct_timestp + '&' + info
+
+        http = Net::HTTP.new(uri.host, uri.port)
+
+        http.use_ssl = true
+
+        res = http.post(uri.path , postdata)
+        puts res.body
+      end
+
+
+      def put_test endpoint, test
+    
+         # remove preceeding slash
+        endpoint.gsub!(/^\//, '')
+
+        uri  = construct_apiuri(endpoint)
+
+        postdata = uri.query + '&' + construct_timestp + '&' + test.to_post
+        
+        http = Net::HTTP.new(uri.host, uri.port)
+
+        http.use_ssl = true
+      
+        res = http.post(uri.path , postdata)
+        puts res.body
       end
 
       def set_authtoken string
