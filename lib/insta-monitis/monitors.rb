@@ -31,7 +31,7 @@ module InstaMonitis
     def to_post
       string = ""
       self.instance_variables.each do |k|
-        string << "#{k.to_s.delete('@')}=#{(self.instance_variable_get k).to_s.delete(' ')}"
+        string << "&#{k.to_s.delete('@')}=#{(self.instance_variable_get k).to_s.delete(' ')}"
       end
       return string
     end
@@ -74,7 +74,6 @@ module InstaMonitis
     def initialize
       @name = nil
       @url = nil
-      @interval = 1
       @timeout = 59000
       @locationIds = nil
       @checkInterval = nil

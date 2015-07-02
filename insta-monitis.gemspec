@@ -9,9 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Dan Pramann"]
   spec.email         = ["dpramann@lakana.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = "CLI interface for Monitis API" 
+  spec.description   = "A CLI which allows you to create and list HTTP and Full Page Load tests in Monitis"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or

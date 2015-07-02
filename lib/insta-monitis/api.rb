@@ -67,13 +67,13 @@ module InstaMonitis
         end
       end
 
-      def put endpoint, info
+      def put endpoint
         # remove preceeding slash
         endpoint.gsub!(/^\//, '')
 
         uri  = construct_apiuri(endpoint)
 
-        postdata = uri.query + '&' + construct_timestp + '&' + info
+        postdata = uri.query + '&' + construct_timestp
 
         http = Net::HTTP.new(uri.host, uri.port)
 

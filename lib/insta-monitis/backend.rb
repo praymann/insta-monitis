@@ -60,20 +60,26 @@ module InstaMonitis
 
     def create_http
       this = HTTPMonitor.new
-      puts this.to_json
       userinput_http this
-      puts this.to_json
-
+      push_test('addExternalMonitor', this)
     end
 
     def create_fullpage
       this = FullPageMonitor.new
-      puts this.to_json
-
+      userinput_fullpage this
+      push_test('addFullPageLoadMonitor', this)
     end
 
     def create_bulk
 
+    end
+    
+    def delete_http id
+      push("deleteExternalMonitor&testIds=#{id}")
+    end
+    
+    def delete_fullpage id
+      push("deleteFullPageLoadMonitor&monitorId=#{id}")
     end
    
     private
@@ -97,9 +103,12 @@ module InstaMonitis
       return storage
     end
 
-    def push_test
-      
-    
+    def push_test action, object
+      @monitis.put_test(action.to_s, object) 
+    end
+
+    def push action
+      @monitis.put(action.to_s)
     end
 
     def print object, style

@@ -5,13 +5,20 @@ A simple ruby CLI which enables the quick creation or listing of tests in a Moni
 Leverages v3 of the Monitis API.
 
 TODO:
-* Flesh out creation of tests from a set of defaults, given a url/etc
-* Flesh out "filling in the details" of a test, before POST
-* Flesh out POST'in to Monitis API
 * Flesh out creating .monitis via API call with username/password
 * Flesh out bulk creation via .csv?
 * Comments, Comments, Comments
 * Error handling
+
+## Requirements
+
+Requires rubygems thor and bundler.
+
+Install with:
+
+    ~> gem install thor
+
+    ~> gem install bundler
 
 ## Installation
 
@@ -54,6 +61,7 @@ Commands:
 Options:
   [--verbose], [--no-verbose] 
 ```
+
 List:
 ```ruby
 ~> insta-monitis list
@@ -78,14 +86,43 @@ Options:
 Description:
   Using the API, list every single monitor of any type. Sorted by id
 ```
+
 Add:
 ```ruby
+~> insta-monitis add
+Commands:
+  insta-monitis add bulk --file=[FILE]  # Via file, create one or many test(s)
+  insta-monitis add help [COMMAND]      # Describe subcommands or one specific subcommand
+  insta-monitis add http                # Interactively create a http test
+  insta-monitis add page                # Interactively create a full page load test
 
+~> insta-monitis add help bulk
+Usage:
+  insta-monitis bulk --file=[FILE]
+
+Options:
+  -f, [--file=FILE]  # Filename to load
+
+Description:
+  Load in a file full of test(s), use the API to created them in Monitis.
+
+```
+
+Delete:
+```ruby
+~> insta-monitis del 
+Commands:
+  insta-monitis del help [COMMAND]  # Describe subcommands or one specific subcommand
+  insta-monitis del http --id=[ID]  # Delete the http test with given Id
+  insta-monitis del page --id=[ID]  # Delete the full page load test with given Id
+
+Options:
+  -i, [--id=N]  # Id of test
 ```
 
 Search:
 ```ruby
-dpramann@atlas~/p/insta-monitis> bin/insta-monitis search
+~> insta-monitis search
 Commands:
   insta-monitis search help [COMMAND]                           # Describe subcommands or one specific subcommand
   insta-monitis search http --[OPTION]=[VALUE] --style=[STYLE]  # Search all http tests

@@ -108,6 +108,22 @@ module InstaMonitis
   end
 
   class Del < Thor
+    class_option :id, :aliases => '-i', :type => :numeric, :desc => 'Id of test'
+    desc "http --id=[ID]", "Delete the http test with given Id"
+    long_desc <<-LONGDESC
+      There is no undo, given an Id go nuclear and nuke it from orbit. 
+    LONGDESC
+    def http()
+      Backend.new.delete_http(options[:id])
+    end
+
+    desc "page --id=[ID]", "Delete the full page load test with given Id"
+    long_desc <<-LONGDESC
+      There is no undo, given an Id go nuclear and nuke it from orbit. 
+    LONGDESC
+    def page()
+      Backend.new.delete_fullpage(options[:id])
+    end
 
   end
 
