@@ -28,6 +28,20 @@ module InstaMonitis
         return storage
       end
     end
+  
+    def check_file file
+      if File.exist? file
+        if file.include? '.csv'
+          return file
+        else
+          puts "File must end with .csv"
+          exit
+        end
+      else
+        puts "Is that a valid filename or valid path?"
+        exit
+      end
+    end
   end
 
   class List < Thor
@@ -74,6 +88,8 @@ module InstaMonitis
 
 
   class Add < Thor
+    include RunnerHelper
+  
     desc "http", "Interactively create a http test"
     long_desc <<-LONGDESC
       After building a local http ExternalMonitor, use the API to created it in Monitis.
@@ -96,7 +112,7 @@ module InstaMonitis
     LONGDESC
     option :file, :aliases => '-f', :desc => 'Filename to load'
     def bulk()
-      Backend.new.create_bulk
+      Backend.new.create_bulk(check_file(options[:file]))
     end
 
 

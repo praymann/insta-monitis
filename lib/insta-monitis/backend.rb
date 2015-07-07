@@ -70,8 +70,20 @@ module InstaMonitis
       push_test('addFullPageLoadMonitor', this)
     end
 
-    def create_bulk
-
+    def create_bulk file
+      this = userinput_import file
+      this.each do |test|
+        case test.to_hash['type']
+          when 'http'
+            puts "Creating: #{test.to_post}"
+            push_test('addExternalMonitor', test)
+          when 'fullpage'
+            puts "Creating: #{test.to_post}" 
+            push_test('addFullPageLoadMonitor', test)
+          else
+            puts "\nMissing type of test, or bad value. Must be http or fullpage. #{test.to_hash}"
+        end
+      end
     end
     
     def delete_http id

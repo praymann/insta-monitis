@@ -24,7 +24,12 @@ module InstaMonitis
 
     def from_hash! hash
       hash.each do |k,v|
-        self.instance_variable_set "@#{k}", v
+        self.instance_variables.each do |var|
+          if var.to_s.delete('@') == k
+            self.instance_variable_set "@#{k}", v
+            break
+          end
+        end
       end
     end
 
@@ -72,6 +77,7 @@ module InstaMonitis
 
     include MonitorsHelper
     def initialize
+      @type = 'fullpage'
       @name = nil
       @url = nil
       @timeout = 59000
