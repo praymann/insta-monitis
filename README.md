@@ -6,7 +6,8 @@ Leverages v3 of the Monitis API.
 
 TODO:
 * Flesh out creating .monitis via API call with username/password
-* Flesh out bulk creation via .csv?
+* Add functionality to manage Pages/Organization in Monitis dashboard UI
+* Build out Testing via Rake/etc.
 * Comments, Comments, Comments
 * Error handling
 
@@ -107,6 +108,19 @@ Description:
   Load in a file full of test(s), use the API to created them in Monitis.
 
 ```
+The --file option will only accept a .csv file. The .csv needs to contain the headers like so:
+
+    type,name,url,interval,timeout,locationIds,tag,checkInterval
+    http,this_is_a_http,http.com,,,1 8 10,http!,,,
+    fullpage,this_is_a_page,fullpage.com,,,1 8 10,fullpage!,1 1 1,,,
+    fullpage,asfd,asdf,asdf,9, ,9, , , 
+
+Type is a required header, as is name, url, locationIds, and tag.
+
+If type is fullpage, checkInterval is required as well and must match the locationIds.
+
+locationIds and checkInterval should be ' ' seperated values.
+
 
 Delete:
 ```ruby
