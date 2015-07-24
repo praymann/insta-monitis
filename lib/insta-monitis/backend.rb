@@ -1,4 +1,6 @@
 require 'uri'
+require 'date'
+require 'csv'
 require 'insta-monitis/userinput'
 
 module InstaMonitis
@@ -49,6 +51,18 @@ module InstaMonitis
         end
       end
     end
+
+    def search_http_quiet param
+      unless param['id'].nil?
+        return dump("testinfo&testId=#{param['id']}")
+      else
+        unless param['tag'].nil?
+          return dump("tagtests&tag=#{param['tag']}")
+        else
+          return search(dump('tests')['testList'], param)
+        end
+      end
+    end
     
     def search_fullpage param, style
       unless param['id'].nil?
@@ -93,8 +107,59 @@ module InstaMonitis
     def delete_fullpage id
       push("deleteFullPageLoadMonitor&monitorId=#{id}")
     end
+
+    def report_http id, dayrange
+      # Grab URL for that HTTP Monitor
+      param = Hash.new
+      param['id'] = id
+      reporturl = search_http_quiet(param)['url'] 
+      
+      # Get the dates in order
+      from = Date.today
+      to = ( from - dayrange )
+      
+      # Place to put data
+      storage = Array.new
+
+      from.downto(to){ |date|
+        puts "Issuing API requests for #{date}.."
+        pull_http_results(id, date).each do |location|
+          location['data'].each do |data|
+            temp = Array.new
+            temp << reporturl
+            temp << location['locationName']
+            temp << data
+            storage << temp.flatten!
+          end
+        end 
+      }
+      write_csv(( storage.sort_by { |data| data[2] } ), reporturl)
+    end
    
     private
+
+    def write_csv array, url
+      file = ENV['HOME'] + "/monitis-report-#{url}-" + Date.today.to_s + ".csv"
+      CSV.open(file, "wb") do |csv|
+        csv << [ "URL", "LOCATION", "DATE", "TIME",  "HTTP" ]
+        array.each do |data|
+          csv << data
+        end
+      end
+    end
+
+    def construct_result_action id, date
+      return "testresult&testId=#{id}&year=#{date.year}&month=#{date.month}&day=#{date.day}"
+    end 
+
+    def pull_http_results id, date
+      begin
+        return @monitis.get(construct_result_action(id, date))
+      rescue
+        puts "API failure? You're not supposed to be here. Exiting."
+        exit
+      end
+    end
 
     def dump action
       begin  

@@ -28,7 +28,18 @@ module InstaMonitis
         return storage
       end
     end
-  
+
+    def require_id options
+      storage = options.reject { |k, v| k == 'verbose' }
+      storage.reject! { |k, v| k == 'style' }
+      if storage[:id].nil? 
+        puts "Generating a report requires a test id."
+        exit
+      else
+        return storage
+      end
+    end
+
     def check_file file
       if File.exist? file
         if file.include? '.csv'
@@ -125,7 +136,7 @@ module InstaMonitis
 
   class Del < Thor
     class_option :id, :aliases => '-i', :type => :numeric, :desc => 'Id of test'
-    desc "http --id=[ID]", "Delete the http test with given Id"
+    desc "http --id=[N]", "Delete the http test with given Id"
     long_desc <<-LONGDESC
       There is no undo, given an Id go nuclear and nuke it from orbit. 
     LONGDESC
@@ -133,7 +144,7 @@ module InstaMonitis
       Backend.new.delete_http(options[:id])
     end
 
-    desc "page --id=[ID]", "Delete the full page load test with given Id"
+    desc "page --id=[N]", "Delete the full page load test with given Id"
     long_desc <<-LONGDESC
       There is no undo, given an Id go nuclear and nuke it from orbit. 
     LONGDESC
@@ -184,6 +195,26 @@ module InstaMonitis
     end
   end
 
+  class Report < Thor
+    include RunnerHelper
+    class_option :id, :aliases => '-i', :type => :numeric, :desc => 'Id of test'
+    class_option :days, :aliases => '-d', :type => :numeric, :desc => 'How many days', :default => 150
+    desc "http --[ID]=[N] --[DAYS]=[N]", "Generate report for given http test"
+    long_desc <<-LONGDESC
+      Using the API, generate a .csv report of a HTTP Monitor going back [x] days.
+      
+      For a given id ( -i, --id ), use the api to pull every day going back to [x] days.
+
+      If the amount of days ( -d, --days ), isn't set, it will default to 150 days.
+
+      Combine the results sanely, and dump it into a .csv file.
+    LONGDESC
+    def http()
+      this = Backend.new
+      this.report_http(require_id(options)[:id], options[:days]) 
+    end
+  end
+
   class Runner < Thor
     class_option :verbose, :aliases => '-v', :type => :boolean
 
@@ -198,6 +229,9 @@ module InstaMonitis
 
     desc "search [COMMAND] [ARGS]", "Perform search operations"
     subcommand "search", Search
+
+    desc "report [COMMAND] [ARGS]", "Perform report operations"
+    subcommand "report", Report
 
     no_commands do
       def log(str)

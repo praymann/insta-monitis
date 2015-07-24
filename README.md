@@ -151,6 +151,26 @@ Options:
   -t, [--tag=TAG]      # Tag of test(s)
 ```
 
+
+Report:
+```ruby
+~> insta-monitis report http -i 176633 -d 2
+Issuing API requests for 2015-07-24..
+Issuing API requests for 2015-07-23..
+Issuing API requests for 2015-07-22..
+
+~> insta-monitis report 
+Commands:
+  insta-monitis report help [COMMAND]                # Describe subcommands or one specific subcommand
+  insta-monitis report http --[ID]=[N] --[DAYS]=[N]  # Generate report for given http test
+
+Options:
+  -i, [--id=N]    # Id of test
+  -d, [--days=N]  # How many days
+                  # Default: 150
+```
+The report will create a .csv file in the HOME directory of the current user.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.

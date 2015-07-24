@@ -8,7 +8,7 @@ module InstaMonitis
     class Api 
       @@host = 'https://api.monitis.com'
       @@prefix = '/api'
-      @@version = 'version=3'
+      @@version = 'version=2'
       
       def initialize opts={}
         @key    = opts["key"]
