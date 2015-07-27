@@ -198,14 +198,14 @@ module InstaMonitis
   class Report < Thor
     include RunnerHelper
     class_option :id, :aliases => '-i', :type => :numeric, :desc => 'Id of test'
-    class_option :days, :aliases => '-d', :type => :numeric, :desc => 'How many days', :default => 150
+    class_option :days, :aliases => '-d', :type => :numeric, :desc => 'How many days', :default => 25 
     desc "http --[ID]=[N] --[DAYS]=[N]", "Generate report for given http test"
     long_desc <<-LONGDESC
       Using the API, generate a .csv report of a HTTP Monitor going back [x] days.
       
       For a given id ( -i, --id ), use the api to pull every day going back to [x] days.
 
-      If the amount of days ( -d, --days ), isn't set, it will default to 150 days.
+      If the amount of days ( -d, --days ), isn't set, it will default to 25 days.
 
       Combine the results sanely, and dump it into a .csv file.
     LONGDESC
